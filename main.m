@@ -2,12 +2,12 @@ function main()
     clc;
     close all;
     clear all;
-    % my_conv_test()
+    my_conv_test()
     % my_smoothing_test()
     % spek3()
     % spek4()
     % spek5()
-    spek6()
+    % spek6()
     % spek7()
 end
 % spek 1
@@ -55,21 +55,21 @@ function my_conv_test()
     masktest = [1 2 1; 0 0 0; -1 -2 -1]
     % mask1 = [1/16 2/16 1/16 ; 2/16 4/16 2/16 ; 1/16 2/16 1/16];
     mask1 = [1 2 1 ; 2 4 2 ; 1 2 1]/16;
-    mask2 = [0 -1 0 ; -1 -4 -1 ; 0 -1 0];
+    mask2 = [0 -1 0 ; -1 4 -1 ; 0 -1 0];
     mask3 = [1 1 2 2 2 1 1 ; 1 2 2 4 2 2 1 ; 2 2 4 8 4 2 2 ; 2 4 8 16 8 4 2 ; 2 2 4 8 4 2 2 ; 1 2 2 4 2 2 1 ; 1 1 2 2 2 1 1] / 140 ;
     mask4 = [ -1 -1 -1 ; -1 17 -1 ; -1 -1 -1];
-    img_input = imread("1.jpg");   
+    img_input = imread("image-034.jpg");   
     % imageGrayscale = rgb2gray(img_input);
     % print(mask2)
     figure;
     
     % imshow(imageGrayscale)
     % img_result = my_grey_conv(double(imageGrayscale), mask1);        
-    img_result = uint8(my_grey_conv(double(img_input), mask3));
+    img_result = uint8(my_grey_conv(double(img_input), mask2));
     figure;
     imshow(img_result)
 
-    hasilKonvolusiMatlab = uint8(convn (double(img_input), mask3, 'same'));
+    hasilKonvolusiMatlab = uint8(convn (double(img_input), mask2, 'same'));
     figure;
     imshow(hasilKonvolusiMatlab)
 end
@@ -558,72 +558,45 @@ end
 % Pikirkan bagaimana cara menghilangan derau periodik pada citra berikut, lalu tulislah program
 % Matlab nya.
 function spek6()
-    % Baca citra grayscale
-    grayImage = imread('image-021.bmp');
-    gray_myImage = imread('myImage.bmp');
 
-    
-    % Baca citra berwarna
-    color_image = imread('image-022.jpg');
-    color_myImage = imread('myImage.jpg');
+    grayImage = imread('image-029.bmp');
+    [rows columns channel] = size(grayImage);
+    if channel > 1
+        grayImage = rgb2gray(grayImage);
+    end
+    subplot(2, 3, 1);
+    imshow(grayImage, [0 255]);
     
     frequencyImage = fftshift(fft2(grayImage));
-    % Take log magnitude so we can see it better in the display.
     amplitudeImage = log(abs(frequencyImage));
     minValue = min(min(amplitudeImage))
     maxValue = max(max(amplitudeImage))
     subplot(2, 3, 4);
     imshow(amplitudeImage, []);
-    % caption = sprintf('Notice the two spikes\nperpendicular to the periodic frequency');
-    % title(caption, 'FontSize', fontSize);
-    % axis on;
-    % zoom(10)
-    
-    % Find the location of the big spikes.
-    amplitudeThreshold = 10.9;
-    brightSpikes = amplitudeImage > amplitudeThreshold; % Binary image.
-    % subplot(2, 3, 5);
-    % imshow(brightSpikes);
-    % axis on;
-    % title('Bright Spikes', 'FontSize', fontSize);
-    % Let user see the image.
-    promptMessage = sprintf('The image below shows the bright spikes.\nNow we will exclude the central spike.');
-    titleBarCaption = 'Continue?';
-    button = questdlg(promptMessage, titleBarCaption, 'Continue', 'Cancel', 'Continue');
-    if strcmpi(button, 'Cancel')
-        return;
-    end
-    % Exclude the central DC spike.  Everything from row 115 to 143.
-    brightSpikes(115:143, :) = 0;
+
+    amplitudeThreshold = 10.97;
+    brightSpikes = amplitudeImage > amplitudeThreshold;
+    subplot(2, 3, 5);
     imshow(brightSpikes);
-    title('Bright spikes other than central spike', 'FontSize', fontSize);
-    
-    promptMessage = sprintf('Now we will use these bright spikes to filter (mask) the spectrum.');
-    button = questdlg(promptMessage, titleBarCaption, 'Continue', 'Cancel', 'Continue');
-    if strcmpi(button, 'Cancel')
-        return;
-    end
-    % Filter/mask the spectrum.
+  
+    brightSpikes(115:130, :) = 0;
+    imshow(brightSpikes);
     frequencyImage(brightSpikes) = 0;
-    % Take log magnitude so we can see it better in the display.
     amplitudeImage2 = log(abs(frequencyImage));
     minValue = min(min(amplitudeImage2))
     maxValue = max(max(amplitudeImage2))
     subplot(2, 3, 5);
     imshow(amplitudeImage2, [minValue maxValue]);
     axis on;
-    title('Spikes zeroed out', 'FontSize', fontSize);
-    % zoom(10)
-    
+
     filteredImage = ifft2(fftshift(frequencyImage));
     amplitudeImage3 = abs(filteredImage);
     minValue = min(min(amplitudeImage3))
     maxValue = max(max(amplitudeImage3))
     subplot(2, 3, 6);
     imshow(amplitudeImage3, [minValue maxValue]);
-    title('Filtered Image', 'FontSize', fontSize);
-    % set(gcf, 'units','normalized','outerposition',[0 0 1 1]); % Maximize figure.
-    % % 
+    title('Filtered Image');
+    
     
 end
 % Spek 7
@@ -631,3 +604,49 @@ end
 % lalu lakukan dekonvolusi pada citra tersebut dengan penapis Wiener. Program penapis
 % Wiener anda buat sendiri (tidak boleh menggunakan fungsi Wiener di dalam Matlab).
 % Ujicoba pada dua citra di bawah ini dan dua citra tambahan:
+
+function blurredImage = motionBlur(inputImage, kernelSize, angleDegrees)
+    
+    % Create a motion blur kernel
+    motionBlurKernel = fspecial('motion', kernelSize, angleDegrees);
+
+    % Apply motion blur to the input image using convolution
+    blurredImage = imfilter(inputImage, motionBlurKernel, 'conv', 'replicate');
+
+end
+
+function spek7()
+
+    grayImage = imread('image-032.bmp');
+
+    colorImage = imread('image-033.jpg')
+
+    inputImage = grayImage
+    kernelSize = 20;  
+    angleDegrees = 105; 
+
+    motionBlurKernel = fspecial('motion', kernelSize, angleDegrees);
+
+    blurredImage = imfilter(inputImage, motionBlurKernel, 'conv', 'circular');
+
+    % Restorasi citra dengan penapis Wiener
+    wnr1 = deconvwnr(blurredImage, motionBlurKernel, 0); %NSR = 0, tidak ada noise aditif
+
+
+    % Display the original and blurred images
+    subplot(1, 3, 1);
+    imshow(inputImage);
+    title('Citra Asli');
+
+    subplot(1, 3, 2);
+    imshow(blurredImage);
+    title('Citra dengan motiion blur');
+
+    subplot(1, 3, 3 );
+    imshow(wnr1);
+    title('Citra hasil restorasi');
+
+
+    imwrite(blurredImage, "tempBlurredImage.jpg");
+
+end
