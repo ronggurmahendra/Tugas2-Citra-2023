@@ -6,7 +6,9 @@ function main()
     % my_smoothing_test()
     % spek3()
     % spek4()
-    spek5()
+    % spek5()
+    spek6()
+    % spek7()
 end
 % spek 1
 
@@ -254,266 +256,231 @@ end
 % program dengan menggunakan contoh citra berikut dan dua citra tambahan yang anda cari
 % sendiri.
 function outputImage = min_filter(inputImage, kernelSize)
-    % Ensure kernelSize is odd
-    if mod(kernelSize, 2) == 0
-        error('Kernel size must be odd');
-    end
+    % dimensi gambar
+    [rows, cols, channels] = size(inputImage);
     
-    % Get image dimensions
-    [rows, cols] = size(inputImage);
+    % init output
+    outputImage = zeros(rows, cols, channels);
     
-    % Initialize the output image
-    outputImage = zeros(rows, cols);
-    
-    % Calculate the radius of the kernel
+    % radius kernel
     radius = (kernelSize - 1) / 2;
     
-    for i = 1:rows
-        for j = 1:cols
-            % Get the neighborhood of the current pixel
-            neighborhood = inputImage(max(1, i - radius):min(rows, i + radius), ...
-                                      max(1, j - radius):min(cols, j + radius));
-            
-            % Apply the minimum filter operation
-            outputImage(i, j) = min(neighborhood(:));
+    for c = 1:channels
+        for i = 1:rows
+            for j = 1:cols
+                neighborhood = inputImage(max(1, i - radius):min(rows, i + radius), ...
+                                          max(1, j - radius):min(cols, j + radius), c);
+                
+                outputImage(i, j, c) = min(neighborhood(:));
+            end
         end
     end
 end
 
 function outputImage = max_filter(inputImage, kernelSize)
-    % Ensure kernelSize is odd
-    if mod(kernelSize, 2) == 0
-        error('Kernel size must be odd');
-    end
+    % dimensi gambar
+    [rows, cols, channels] = size(inputImage);
     
-    % Get image dimensions
-    [rows, cols] = size(inputImage);
+    % init output
+    outputImage = zeros(rows, cols, channels);
     
-    % Initialize the output image
-    outputImage = zeros(rows, cols);
-    
-    % Calculate the radius of the kernel
+    % radius kernel
     radius = (kernelSize - 1) / 2;
     
-    for i = 1:rows
-        for j = 1:cols
-            % Get the neighborhood of the current pixel
-            neighborhood = inputImage(max(1, i - radius):min(rows, i + radius), ...
-                                      max(1, j - radius):min(cols, j + radius));
-            
-            % Apply the maximum filter operation
-            outputImage(i, j) = max(neighborhood(:));
+    for c = 1:channels
+        for i = 1:rows
+            for j = 1:cols
+                neighborhood = inputImage(max(1, i - radius):min(rows, i + radius), ...
+                                        max(1, j - radius):min(cols, j + radius),c);
+                
+                outputImage(i, j,c) = max(neighborhood(:));
+            end
         end
     end
 end
 function outputImage = median_filter(inputImage, kernelSize)
-    % Ensure kernelSize is odd
-    if mod(kernelSize, 2) == 0
-        error('Kernel size must be odd');
-    end
+
+    % dimensi gambar
+    [rows, cols, channels] = size(inputImage);
     
-    % Get image dimensions
-    [rows, cols] = size(inputImage);
+    % init output
+    outputImage = zeros(rows, cols, channels);
     
-    % Initialize the output image
-    outputImage = zeros(rows, cols);
-    
-    % Calculate the radius of the kernel
+    % radius kernel
     radius = (kernelSize - 1) / 2;
     
-    for i = 1:rows
-        for j = 1:cols
-            % Get the neighborhood of the current pixel
-            neighborhood = inputImage(max(1, i - radius):min(rows, i + radius), ...
-                                      max(1, j - radius):min(cols, j + radius));
-            
-            % Apply the median filter operation
-            outputImage(i, j) = median(neighborhood(:));
+    for c = 1:channels
+        for i = 1:rows
+            for j = 1:cols
+                % Get the neighborhood of the current pixel
+                neighborhood = inputImage(max(1, i - radius):min(rows, i + radius), ...
+                                        max(1, j - radius):min(cols, j + radius),c);
+                
+                % Apply the median filter operation
+                outputImage(i, j,c) = median(neighborhood(:));
+            end
         end
     end
 end
 
 function outputImage = arithmetic_mean_filter(inputImage, kernelSize)
-    % Ensure kernelSize is odd
-    if mod(kernelSize, 2) == 0
-        error('Kernel size must be odd');
-    end
+    % dimensi gambar
+    [rows, cols, channels] = size(inputImage);
     
-    % Get image dimensions
-    [rows, cols] = size(inputImage);
+    % init output
+    outputImage = zeros(rows, cols, channels);
     
-    % Initialize the output image
-    outputImage = zeros(rows, cols);
-    
-    % Calculate the radius of the kernel
+    % radius kernel
     radius = (kernelSize - 1) / 2;
     
-    for i = 1:rows
-        for j = 1:cols
-            % Get the neighborhood of the current pixel
-            neighborhood = inputImage(max(1, i - radius):min(rows, i + radius), ...
-                                      max(1, j - radius):min(cols, j + radius));
-            
-            % Calculate the average value in the neighborhood
-            outputImage(i, j) = mean(neighborhood(:));
+    for c = 1:channels
+        for i = 1:rows
+            for j = 1:cols
+                neighborhood = inputImage(max(1, i - radius):min(rows, i + radius), ...
+                                        max(1, j - radius):min(cols, j + radius),c);
+                
+                outputImage(i, j,c) = mean(neighborhood(:));
+            end
         end
     end
 end
 
 function outputImage = geometric_filter(inputImage, kernelSize, angle_degrees)
-    % Ensure kernelSize is odd
-    if mod(kernelSize, 2) == 0
-        error('Kernel size must be odd');
-    end
+
     
-    % Get image dimensions
-    [rows, cols] = size(inputImage);
+    % dimensi gambar
+    [rows, cols, channels] = size(inputImage);
     
-    % Initialize the output image
-    outputImage = zeros(rows, cols);
+    % init output
+    outputImage = zeros(rows, cols, channels);
     
-    % Calculate the radius of the kernel
+    % radius kernel
     radius = (kernelSize - 1) / 2;
     
     % Convert the angle from degrees to radians
     angle_radians = deg2rad(angle_degrees);
     
-    for i = 1:rows
-        for j = 1:cols
-            % Get the neighborhood of the current pixel
-            neighborhood = inputImage(max(1, i - radius):min(rows, i + radius), ...
-                                      max(1, j - radius):min(cols, j + radius));
-            
-            % Perform a geometric operation (e.g., rotation) on the neighborhood
-            rotated_neighborhood = imrotate(neighborhood, angle_degrees, 'bilinear', 'crop');
-            
-            % Calculate the center of the rotated neighborhood
-            center = floor(size(rotated_neighborhood) / 2) + 1;
-            
-            % Assign the central pixel value of the rotated neighborhood to the output image
-            outputImage(i, j) = rotated_neighborhood(center(1), center(2));
+    for c = 1:channels
+        for i = 1:rows
+            for j = 1:cols
+
+                neighborhood = inputImage(max(1, i - radius):min(rows, i + radius), ...
+                                        max(1, j - radius):min(cols, j + radius),c);
+                
+
+                rotated_neighborhood = imrotate(neighborhood, angle_degrees, 'bilinear', 'crop');
+                
+                center = floor(size(rotated_neighborhood) / 2) + 1;
+                
+                outputImage(i, j,c) = rotated_neighborhood(center(1), center(2));
+            end
         end
     end
 end
 function outputImage = harmonic_mean_filter(inputImage, kernelSize)
-    % Ensure kernelSize is odd
-    if mod(kernelSize, 2) == 0
-        error('Kernel size must be odd');
-    end
+
     
-    % Get image dimensions
-    [rows, cols] = size(inputImage);
+    % dimensi gambar
+    [rows, cols, channels] = size(inputImage);
     
-    % Initialize the output image
-    outputImage = zeros(rows, cols);
+    % init output
+    outputImage = zeros(rows, cols, channels);
     
-    % Calculate the radius of the kernel
+    % radius kernel
     radius = (kernelSize - 1) / 2;
     
-    for i = 1:rows
-        for j = 1:cols
-            % Get the neighborhood of the current pixel
-            neighborhood = inputImage(max(1, i - radius):min(rows, i + radius), ...
-                                      max(1, j - radius):min(cols, j + radius));
-            
-            % Calculate the harmonic mean of the neighborhood
-            reciprocal_neighborhood = 1 ./ double(neighborhood);
-            harmonic_mean = kernelSize^2 / sum(reciprocal_neighborhood(:));
-            
-            % Assign the harmonic mean to the output image
-            outputImage(i, j) = harmonic_mean;
+    for c = 1:channels
+        for i = 1:rows
+            for j = 1:cols
+                % Get the neighborhood of the current pixel
+                neighborhood = inputImage(max(1, i - radius):min(rows, i + radius), ...
+                                        max(1, j - radius):min(cols, j + radius),c);
+                
+                reciprocal_neighborhood = 1 ./ double(neighborhood);
+                harmonic_mean = kernelSize^2 / sum(reciprocal_neighborhood(:));
+                
+                outputImage(i, j,c) = harmonic_mean;
+            end
         end
     end
 end
 function outputImage = contraharmonic_mean_filter(inputImage, kernelSize, q)
-    % Ensure kernelSize is odd
-    if mod(kernelSize, 2) == 0
-        error('Kernel size must be odd');
-    end
+
     
-    % Get image dimensions
-    [rows, cols] = size(inputImage);
+    % dimensi gambar
+    [rows, cols, channels] = size(inputImage);
     
-    % Initialize the output image
-    outputImage = zeros(rows, cols);
+    % init output
+    outputImage = zeros(rows, cols, channels);
     
-    % Calculate the radius of the kernel
+    
+    % radius kernel
     radius = (kernelSize - 1) / 2;
-    
-    for i = 1:rows
-        for j = 1:cols
-            % Get the neighborhood of the current pixel
-            neighborhood = inputImage(max(1, i - radius):min(rows, i + radius), ...
-                                      max(1, j - radius):min(cols, j + radius));
-            
-            % Calculate the numerator and denominator of the contraharmonic mean
-            numerator = sum(neighborhood(:) .^ (q + 1));
-            denominator = sum(neighborhood(:) .^ q);
-            
-            % Compute the contraharmonic mean
-            if denominator == 0
-                outputImage(i, j) = 0;
-            else
-                outputImage(i, j) = numerator / denominator;
+    for c = 1:channels
+        for i = 1:rows
+            for j = 1:cols
+                neighborhood = inputImage(max(1, i - radius):min(rows, i + radius), ...
+                                        max(1, j - radius):min(cols, j + radius),c);
+                
+                numerator = sum(neighborhood(:) .^ (q + 1));
+                denominator = sum(neighborhood(:) .^ q);
+                
+                if denominator == 0
+                    outputImage(i, j,c) = 0;
+                else
+                    outputImage(i, j,c) = numerator / denominator;
+                end
             end
         end
     end
 end
 function outputImage = midpoint_filter(inputImage, kernelSize)
-    % Ensure kernelSize is odd
-    if mod(kernelSize, 2) == 0
-        error('Kernel size must be odd');
-    end
+
     
-    % Get image dimensions
-    [rows, cols] = size(inputImage);
+    % dimensi gambar
+    [rows, cols, channels] = size(inputImage);
     
-    % Initialize the output image
-    outputImage = zeros(rows, cols);
+    % init output
+    outputImage = zeros(rows, cols, channels);
     
-    % Calculate the radius of the kernel
+    
+    % radius kernel
     radius = (kernelSize - 1) / 2;
-    
-    for i = 1:rows
-        for j = 1:cols
-            % Get the neighborhood of the current pixel
-            neighborhood = inputImage(max(1, i - radius):min(rows, i + radius), ...
-                                      max(1, j - radius):min(cols, j + radius));
-            
-            % Calculate the midpoint (median) value in the neighborhood
-            outputImage(i, j) = median(neighborhood(:));
+    for c = 1:channels
+        for i = 1:rows
+            for j = 1:cols
+                neighborhood = inputImage(max(1, i - radius):min(rows, i + radius), ...
+                                        max(1, j - radius):min(cols, j + radius),c);
+                
+                outputImage(i, j,c) = median(neighborhood(:));
+            end
         end
     end
 end
 function outputImage = alpha_trimmed_mean_filter(inputImage, kernelSize, d)
-    % Ensure kernelSize is odd
-    if mod(kernelSize, 2) == 0
-        error('Kernel size must be odd');
-    end
+
     
-    % Get image dimensions
-    [rows, cols] = size(inputImage);
+    % dimensi gambar
+    [rows, cols, channels] = size(inputImage);
     
-    % Initialize the output image
-    outputImage = zeros(rows, cols);
+    % init output
+    outputImage = zeros(rows, cols, channels);
     
-    % Calculate the radius of the kernel
+    
+    % radius kernel
     radius = (kernelSize - 1) / 2;
-    
-    for i = 1:rows
-        for j = 1:cols
-            % Get the neighborhood of the current pixel
-            neighborhood = inputImage(max(1, i - radius):min(rows, i + radius), ...
-                                      max(1, j - radius):min(cols, j + radius));
-            
-            % Sort the neighborhood pixel values
-            sorted_neighborhood = sort(neighborhood(:));
-            
-            % Exclude d/2 lowest and d/2 highest pixel values
-            trimmed_neighborhood = sorted_neighborhood((d/2 + 1):(end - d/2));
-            
-            % Calculate the mean value of the trimmed neighborhood
-            outputImage(i, j) = mean(trimmed_neighborhood);
+    for c = 1:channels
+        for i = 1:rows
+            for j = 1:cols
+                neighborhood = inputImage(max(1, i - radius):min(rows, i + radius), ...
+                                        max(1, j - radius):min(cols, j + radius),c);
+                
+                sorted_neighborhood = sort(neighborhood(:));
+                
+                trimmed_neighborhood = sorted_neighborhood((d/2 + 1):(end - d/2));
+                
+                outputImage(i, j,c) = mean(trimmed_neighborhood);
+            end
         end
     end
 end
@@ -538,74 +505,129 @@ function spek5()
     arithmetic_mean_denoised_image = arithmetic_mean_filter(color_image_saltnpepper,kernelSize);
     geometric_denoised_image = geometric_filter(color_image_saltnpepper,kernelSize,45);
     harmonic_mean_denoised_image = harmonic_mean_filter(color_image_saltnpepper,kernelSize);
-    contraharmonic_mean_denoised_image = contraharmonic_mean_filter(color_image_saltnpepper,kernelSize, 1.5);
+    % contraharmonic_mean_denoised_image = contraharmonic_mean_filter(color_image_saltnpepper,kernelSize, 1.5);
     midpoint_denoised_image = midpoint_filter(color_image_saltnpepper,kernelSize);
     alpha_trimmed_mean_denoised_image = alpha_trimmed_mean_filter(color_image_saltnpepper,kernelSize,2);
 
     figure;
-    subplot(6, 2, 1);
+    subplot(5, 2, 1);
     imshow(color_image);
     title('Original Asli');
 
-    subplot(6, 2, 2);
+    subplot(5, 2, 2);
     imshow(color_image_saltnpepper);
     title('Citra saltnpepper');
 
-    subplot(6, 2, 3);
-    imshow(color_image_saltnpepper);
+    subplot(5, 2, 3);
+    imshow(uint8(min_denoised_image));
     title('Citra min_denoised_image');
 
-    subplot(6, 2, 4);
-    imshow(color_image_saltnpepper);
+    subplot(5, 2, 4);
+    imshow(uint8(max_denoised_image));
     title('Citra max_denoised_image');
 
-    subplot(6, 2, 5);
-    imshow(color_image_saltnpepper);
+    subplot(5, 2, 5);
+    imshow(uint8(median_denoised_image));
     title('Citra median_denoised_image');
 
-    subplot(6, 2, 6);
-    imshow(color_image_saltnpepper);
+    subplot(5, 2, 6);
+    imshow(uint8(arithmetic_mean_denoised_image));
     title('Citra arithmetic_mean_denoised_image');
 
-    subplot(6, 2, 7);
-    imshow(color_image_saltnpepper);
+    subplot(5, 2, 7);
+    imshow(uint8(geometric_denoised_image));
     title('Citra geometric_denoised_image');
 
-    subplot(6, 2, 8);
-    imshow(color_image_saltnpepper);
+    subplot(5, 2, 8);
+    imshow(uint8(harmonic_mean_denoised_image));
     title('Citra harmonic_mean_denoised_image');
 
-    subplot(6, 2, 9);
-    imshow(color_image_saltnpepper);
-    title('Citra contraharmonic_mean_denoised_image');
+    % subplot(5, 2, 9);
+    % imshow(contraharmonic_mean_denoised_image);
+    % title('Citra contraharmonic_mean_denoised_image');
 
-    subplot(6, 2, 10);
-    imshow(color_image_saltnpepper);
+    subplot(5, 2, 9);
+    imshow(uint8(midpoint_denoised_image));
     title('Citra midpoint_denoised_image');
-    subplot(6, 2, 11);
-    imshow(color_image_saltnpepper);
+    subplot(5, 2, 10);
+    imshow(uint8(alpha_trimmed_mean_denoised_image));
     title('Citra alpha_trimmed_mean_denoised_image');
 end
 
 % Spek 6
 % Pikirkan bagaimana cara menghilangan derau periodik pada citra berikut, lalu tulislah program
 % Matlab nya.
+function spek6()
+    % Baca citra grayscale
+    grayImage = imread('image-021.bmp');
+    gray_myImage = imread('myImage.bmp');
 
+    
+    % Baca citra berwarna
+    color_image = imread('image-022.jpg');
+    color_myImage = imread('myImage.jpg');
+    
+    frequencyImage = fftshift(fft2(grayImage));
+    % Take log magnitude so we can see it better in the display.
+    amplitudeImage = log(abs(frequencyImage));
+    minValue = min(min(amplitudeImage))
+    maxValue = max(max(amplitudeImage))
+    subplot(2, 3, 4);
+    imshow(amplitudeImage, []);
+    % caption = sprintf('Notice the two spikes\nperpendicular to the periodic frequency');
+    % title(caption, 'FontSize', fontSize);
+    % axis on;
+    % zoom(10)
+    
+    % Find the location of the big spikes.
+    amplitudeThreshold = 10.9;
+    brightSpikes = amplitudeImage > amplitudeThreshold; % Binary image.
+    % subplot(2, 3, 5);
+    % imshow(brightSpikes);
+    % axis on;
+    % title('Bright Spikes', 'FontSize', fontSize);
+    % Let user see the image.
+    promptMessage = sprintf('The image below shows the bright spikes.\nNow we will exclude the central spike.');
+    titleBarCaption = 'Continue?';
+    button = questdlg(promptMessage, titleBarCaption, 'Continue', 'Cancel', 'Continue');
+    if strcmpi(button, 'Cancel')
+        return;
+    end
+    % Exclude the central DC spike.  Everything from row 115 to 143.
+    brightSpikes(115:143, :) = 0;
+    imshow(brightSpikes);
+    title('Bright spikes other than central spike', 'FontSize', fontSize);
+    
+    promptMessage = sprintf('Now we will use these bright spikes to filter (mask) the spectrum.');
+    button = questdlg(promptMessage, titleBarCaption, 'Continue', 'Cancel', 'Continue');
+    if strcmpi(button, 'Cancel')
+        return;
+    end
+    % Filter/mask the spectrum.
+    frequencyImage(brightSpikes) = 0;
+    % Take log magnitude so we can see it better in the display.
+    amplitudeImage2 = log(abs(frequencyImage));
+    minValue = min(min(amplitudeImage2))
+    maxValue = max(max(amplitudeImage2))
+    subplot(2, 3, 5);
+    imshow(amplitudeImage2, [minValue maxValue]);
+    axis on;
+    title('Spikes zeroed out', 'FontSize', fontSize);
+    % zoom(10)
+    
+    filteredImage = ifft2(fftshift(frequencyImage));
+    amplitudeImage3 = abs(filteredImage);
+    minValue = min(min(amplitudeImage3))
+    maxValue = max(max(amplitudeImage3))
+    subplot(2, 3, 6);
+    imshow(amplitudeImage3, [minValue maxValue]);
+    title('Filtered Image', 'FontSize', fontSize);
+    % set(gcf, 'units','normalized','outerposition',[0 0 1 1]); % Maximize figure.
+    % % 
+    
+end
 % Spek 7
 % Buatlah program yang melakukan motion bluring pada citra (grayscale dan berwarna),
 % lalu lakukan dekonvolusi pada citra tersebut dengan penapis Wiener. Program penapis
 % Wiener anda buat sendiri (tidak boleh menggunakan fungsi Wiener di dalam Matlab).
 % Ujicoba pada dua citra di bawah ini dan dua citra tambahan:
-
-% mas royan drone
-% mas ardimas research
-% mas renda finance
-
-% pertanyaan : 
-% bobot kerjanya relatif ya 7 jam
-% senin kebetulan ada ujian pagi - pagi itu onboarding mulai jamber ya 
-
-% 50% kerja 50% bljr
-
-
-% No rek 
