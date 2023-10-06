@@ -2,8 +2,9 @@ function main()
     clc;
     close all;
     clear all;
-    my_conv_test()
+    % my_conv_test()
     % my_smoothing_test()
+    lowpassfilter()
     % spek3()
     % spek4()
     % spek5()
@@ -120,12 +121,55 @@ function my_smoothing_test()
     imshow(img_result)
 end
 
+function lowpassfilter()
+    % Baca citra grayscale
+    gray_image = imread('1.bmp');
+
+    % Baca citra berwarna
+    color_image = imread('myImage.jpg');
+
+    imageInput = color_image
+    
+    FT_img = fft2(double(imageInput)); 
+    [M, N] = size(imageInput); 
+    D0 = 30; % one can change this value accordingly 
+  % Designing filter 
+    u = 0:(M-1); 
+    idx = find(u>M/2); 
+    u(idx) = u(idx)-M; 
+    v = 0:(N-1); 
+    idy = find(v>N/2); 
+    v(idy) = v(idy)-N; 
+
+    [V, U] = meshgrid(v, u); 
+    D = sqrt(U.^2+V.^2); 
+  
+    H = 1./(1 + (D0./D).^(2*n)); 
+
+    G = H.*FT_img; 
+    %Inverse fouriser transform
+    img_result = real(ifft2(double(G)));  
+
+
+    % boxKernel = ones(5,5);
+    % blurredImage = convn(color_image, boxKernel, 'same');
+
+
+    figure;
+    imshow(imageInput)
+
+    figure;
+    imshow(img_result)
+
+
+end
+
 function spek3()
     % Baca citra grayscale
     gray_image = imread('1.jpg');
 
     % Baca citra berwarna
-    color_image = imread('1.jpg');
+    color_image = imread('myImage.jpg');
 
     % Tentukan ukuran filter
     filter_size = 31;
